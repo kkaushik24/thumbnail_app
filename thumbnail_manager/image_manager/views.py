@@ -1,9 +1,11 @@
 from PIL import Image
 import urllib2
+import uuid
 import io
 
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponseRedirect
+from django.conf import settings
+from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
 
@@ -31,7 +33,6 @@ def create_thumbnail(request):
 		error_list_str.append(error_msg)
 	if width is None:
 		error_list_str.append(error_msg)
-
 	size = width, height
 	# if there is no error try to process the image url
 	if not error_list_str:
@@ -39,6 +40,7 @@ def create_thumbnail(request):
 			image_data = urllib2.urlopen(image_url)
 			image_file = io.BytesIO(image_data.read())
 			img = Image.open(image_file)
+			
 		except:
 			error_msg = "Image could not be loaded"
 			error_list_str.append(error_msg)
@@ -54,4 +56,6 @@ def create_thumbnail(request):
 		response_dict.update({"errors": error_list_str})
 		return JsonResponse(response_dict)
 	else:
-		return HttpResponseRedirect("/thanks")
+		response = HttpResponse(content_type="image/jpeg")
+		img.save(response, img.format)
+		return response
