@@ -32,6 +32,7 @@ def create_thumbnail(request):
 		error_msg = "No height is provided"
 		error_list_str.append(error_msg)
 	if width is None:
+		error_msg = "No width is provided"
 		error_list_str.append(error_msg)
 	size = width, height
 	# if there is no error try to process the image url
